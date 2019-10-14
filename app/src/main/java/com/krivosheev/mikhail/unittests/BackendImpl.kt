@@ -1,16 +1,10 @@
 package com.krivosheev.mikhail.unittests
 
-import android.util.SparseArray
-import java.util.*
-
-class BackendImpl : Backend {
+class BackendImpl(private val repository: Repository) : Backend {
 
     private companion object {
-
         private const val ID_TO_FAIL = 50
     }
-
-    private val cache = SparseArray<Backend.Result>()
 
     override fun getName(
         id: Int,
@@ -19,6 +13,7 @@ class BackendImpl : Backend {
     ) {
         require(id >= 0) {
             IllegalArgumentException("Id must be greater or equal than zero.")
+
         }
 
         if (id > ID_TO_FAIL) {
@@ -26,18 +21,8 @@ class BackendImpl : Backend {
                 IllegalArgumentException("Backend fails to get name for user with id=$id")
             )
         } else {
-            val result = getResultFromCacheOrCreate(id)
+            val result = repository.getResultFromCacheOrCreate(id)
             resultCallback?.onSuccess(result)
         }
     }
-
-    private fun getResultFromCacheOrCreate(id: Int) =
-        cache[id].takeIf { it != null } ?: {
-            val name = generateRandomName()
-            Backend.Result(name)
-        }.invoke()
-            .also { cache.put(id, it) }
-
-    private fun generateRandomName(): String =
-        (0..7).map { (97 + Random().nextInt(26)).toChar() }.joinToString(separator = "")
 }
