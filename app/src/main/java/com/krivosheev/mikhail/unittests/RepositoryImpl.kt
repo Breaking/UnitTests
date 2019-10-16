@@ -3,18 +3,23 @@ package com.krivosheev.mikhail.unittests
 import android.util.SparseArray
 
 class RepositoryImpl(
-    private val randomNameGenerator: RandomNameGenerator
+    private val randomNameGenerator: RandomNameGenerator,
+    private val cache: SparseArray<Backend.Result>
 ) : Repository {
-    var cache = SparseArray<Backend.Result>()
-    //private val cache = SparseArray<Backend.Result>()
+    // var cache = SparseArray<Backend.Result>()
 
-    override fun getResultFromCacheOrCreate(id: Int) =
+    override fun getResultFromCacheOrCreate(id: Int): Backend.Result {
         //cache[id].name
-        cache[id].takeIf { it != null } ?: {
+        //randomNameGenerator.generateRandomName()
+        return cache[id].takeIf { it != null } ?: {
             val name = randomNameGenerator.generateRandomName()
             Backend.Result(name)
         }.invoke()
-            .also { cache.put(id, it) }
+            .also {
+                cache.put(id, it)
+            }
+    }
+
 }
 
 

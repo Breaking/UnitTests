@@ -12,8 +12,8 @@ import java.util.*
 
 class RepositoryImplTest {
     private val randomNameGenerator: RandomNameGeneratorImpl = mockk()
-    private val repository = RepositoryImpl(randomNameGenerator)
-    private val cache: SparseArray<Backend.Result> = mockk(relaxed = true)
+    private val cache = SparseArray<Backend.Result>()
+    private val repository = RepositoryImpl(randomNameGenerator, cache)
 
     @Test
     fun `should return backend_result when cache is empty`() {
@@ -21,7 +21,7 @@ class RepositoryImplTest {
         every { cache.get(id) } returns null
         every { randomNameGenerator.generateRandomName() } returns RANDOM_NAME
 
-        repository.cache = cache
+        //repository.cache = cache
         val result = repository.getResultFromCacheOrCreate(id)
 
         verify { randomNameGenerator.generateRandomName() }
@@ -35,12 +35,12 @@ class RepositoryImplTest {
         val expectedResult = Backend.Result(RANDOM_NAME)
         every { cache.get(id) } returns expectedResult
 
-        repository.cache = cache
+        //repository.cache = cache
         val result = repository.getResultFromCacheOrCreate(id)
+        //verify { randomNameGenerator.generateRandomName() }
 
         assertEquals(expectedResult, result)
     }
-
 
     companion object {
         const val RANDOM_NAME = "random name"

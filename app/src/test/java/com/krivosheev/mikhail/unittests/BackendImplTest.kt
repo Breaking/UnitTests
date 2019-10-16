@@ -17,26 +17,29 @@ class BackendImplTest {
 
     @ParameterizedTest
     @ValueSource(ints = [-1, -5])
-    fun `should show exception when id less than zero`(id: Int) {
+    fun `should show exception when getting name for given id less than zero`(id: Int) {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             backend.getName(id, resultCallback, errorCallback)
         }
+
         assertEquals(
             "java.lang.IllegalArgumentException: Id must be greater or equal than zero.",
             exception.message
         )
+
         verify { errorCallback wasNot Called }
         verify { resultCallback wasNot Called }
     }
 
     @ParameterizedTest
     @ValueSource(ints = [51, 100])
-    fun `should invoke errorcallback when id is greater than 50`(id: Int) {
+    fun `should invoke errorcallback when getting name for given id is greater than 50`(id: Int) {
         backend.getName(id, resultCallback, errorCallback)
+
         verify {
             errorCallback.onError(match {
                 it.javaClass == IllegalArgumentException::class.java &&
-                it.message == "Backend fails to get name for user with id=$id"
+                        it.message == "Backend fails to get name for user with id=$id"
             })
         }
         confirmVerified(errorCallback)
@@ -44,11 +47,15 @@ class BackendImplTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = [0, 25, 50])
-    fun `should invoke resultCallback with success with correct result`(id: Int) {
+    @ValueSource(ints = [0, 1, 25, 49, 50])
+    fun `should invoke resultCallback with success and correct result when getting name for given valid id`(
+        id: Int
+    ) {
         val result: Backend.Result = mockk()
         every { repository.getResultFromCacheOrCreate(id) } returns result
+
         backend.getName(id, resultCallback, errorCallback)
+
         verify {
             resultCallback.onSuccess(result)
         }
