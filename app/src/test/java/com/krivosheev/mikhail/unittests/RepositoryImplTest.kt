@@ -21,7 +21,6 @@ class RepositoryImplTest {
         every { cache.get(id) } returns null
         every { randomNameGenerator.generateRandomName() } returns RANDOM_NAME
 
-        //repository.cache = cache
         val result = repository.getResultFromCacheOrCreate(id)
 
         verify { randomNameGenerator.generateRandomName() }
@@ -35,9 +34,7 @@ class RepositoryImplTest {
         val expectedResult = Backend.Result(RANDOM_NAME)
         every { cache.get(id) } returns expectedResult
 
-        //repository.cache = cache
         val result = repository.getResultFromCacheOrCreate(id)
-        //verify { randomNameGenerator.generateRandomName() }
 
         assertEquals(expectedResult, result)
     }
