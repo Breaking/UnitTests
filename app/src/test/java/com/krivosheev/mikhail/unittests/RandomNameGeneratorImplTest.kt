@@ -10,7 +10,7 @@ class RandomNameGeneratorImplTest {
     private val randomNameGenerator = RandomNameGeneratorImpl()
 
     @Test
-    fun `should match 8 alphabetical characters  when generating random name for every call`() {
+    fun `should match 8 alphabetical characters when generating random name for every call`() {
         val actual = randomNameGenerator.generateRandomName()
 
         assertTrue(actual.matches(matcher))
