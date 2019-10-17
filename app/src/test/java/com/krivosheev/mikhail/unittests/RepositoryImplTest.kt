@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class RepositoryImplTest {
-    
+
     private val randomNameGenerator: RandomNameGeneratorImpl = mockk {
         every { generateRandomName() } returns RANDOM_NAME
     }

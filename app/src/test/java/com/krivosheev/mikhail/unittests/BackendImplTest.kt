@@ -19,7 +19,7 @@ class BackendImplTest {
 
     @ParameterizedTest
     @ValueSource(ints = [-1])
-    fun `should show exception when getting namegiven id less than zero`(id: Int) {
+    fun `should show exception when getting name given id less than zero`(id: Int) {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             backend.getName(id, resultCallback, errorCallback)
         }
