@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
@@ -17,11 +18,10 @@ class BackendImplTest {
     private val errorCallback: Backend.ErrorCallback = mockk(relaxUnitFun = true)
     private val backendResult: Backend.Result = mockk()
 
-    @ParameterizedTest
-    @ValueSource(ints = [-1])
-    fun `should show exception when getting name given id less than zero`(id: Int) {
+    @Test
+    fun `should throw an exception when getting name given id less than zero`() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            backend.getName(id, resultCallback, errorCallback)
+            backend.getName(-1, resultCallback, errorCallback)
         }
 
         assertEquals(
@@ -30,30 +30,28 @@ class BackendImplTest {
         )
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = [-1])
-    fun `should not invoke errorcallback when getting name given id less than zero`(id: Int) {
+    @Test
+    fun `should not invoke errorcallback when getting name given id less than zero`() {
         assertThrows(IllegalArgumentException::class.java) {
-            backend.getName(id, resultCallback, errorCallback)
+            backend.getName(-1, resultCallback, errorCallback)
         }
 
         verify { errorCallback wasNot Called }
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = [-1])
-    fun `should not invoke resultcallback when getting name given id less than zero`(id: Int) {
+    @Test
+    fun `should not invoke resultcallback when getting name given id less than zero`() {
         assertThrows(IllegalArgumentException::class.java) {
-            backend.getName(id, resultCallback, errorCallback)
+            backend.getName(-1, resultCallback, errorCallback)
         }
 
         verify { resultCallback wasNot Called }
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = [51])
-    fun `should invoke errorcallback when getting name given id is greater than 50`(id: Int) {
-        backend.getName(id, resultCallback, errorCallback)
+    @Test
+    fun `should invoke errorcallback when getting name given id is greater than 50`() {
+        val id = 51
+        backend.getName(51, resultCallback, errorCallback)
 
         verify {
             errorCallback.onError(match {
@@ -63,33 +61,26 @@ class BackendImplTest {
         }
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = [51])
-    fun `should not invoke resultcallback when getting name given id is greater than 50`(id: Int) {
-        backend.getName(id, resultCallback, errorCallback)
+    @Test
+    fun `should not invoke resultcallback when getting name given id is greater than 50`() {
+        backend.getName(51, resultCallback, errorCallback)
 
         verify { resultCallback wasNot Called }
     }
 
     @ParameterizedTest
     @ValueSource(ints = [0, 1, 49, 50])
-    fun `should invoke resultcallback with success and correct result when getting name given valid id`(
-        id: Int
-    ) {
+    fun `should invoke resultcallback with success and correct result when getting name given id from range 0-50`(id: Int) {
         every { repository.getResultFromCacheOrCreate(id) } returns backendResult
 
         backend.getName(id, resultCallback, errorCallback)
 
-        verify {
-            resultCallback.onSuccess(backendResult)
-        }
+        verify { resultCallback.onSuccess(backendResult) }
     }
 
     @ParameterizedTest
     @ValueSource(ints = [0, 1, 49, 50])
-    fun `should not invoke errorCallback when getting name given valid id`(
-        id: Int
-    ) {
+    fun `should not invoke errorcallback when getting name given id from range 0-50`(id: Int) {
         every { repository.getResultFromCacheOrCreate(id) } returns backendResult
 
         backend.getName(id, resultCallback, errorCallback)

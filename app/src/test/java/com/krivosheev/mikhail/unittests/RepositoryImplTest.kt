@@ -53,7 +53,7 @@ class RepositoryImplTest {
     }
 
     companion object {
-        const val RANDOM_NAME = "random name"
-        const val ID = 5
+        private const val RANDOM_NAME = "randomName"
+        private const val ID = 5
     }
 }
