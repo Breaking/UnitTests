@@ -21,19 +21,16 @@ class BackendImplTest {
     @Test
     fun `should throw an exception when getting name given id less than zero`() {
         val exception = assertThrows(IllegalArgumentException::class.java) {
-            backend.getName(-1, resultCallback, errorCallback)
+            backend.getName(ID_LESS_THAN_ZERO, resultCallback, errorCallback)
         }
 
-        assertEquals(
-            "java.lang.IllegalArgumentException: Id must be greater or equal than zero.",
-            exception.message
-        )
+        assertEquals(EXCEPTION_MESSAGE, exception.message)
     }
 
     @Test
     fun `should not invoke errorcallback when getting name given id less than zero`() {
         assertThrows(IllegalArgumentException::class.java) {
-            backend.getName(-1, resultCallback, errorCallback)
+            backend.getName(ID_LESS_THAN_ZERO, resultCallback, errorCallback)
         }
 
         verify { errorCallback wasNot Called }
@@ -42,7 +39,7 @@ class BackendImplTest {
     @Test
     fun `should not invoke resultcallback when getting name given id less than zero`() {
         assertThrows(IllegalArgumentException::class.java) {
-            backend.getName(-1, resultCallback, errorCallback)
+            backend.getName(ID_LESS_THAN_ZERO, resultCallback, errorCallback)
         }
 
         verify { resultCallback wasNot Called }
@@ -50,8 +47,9 @@ class BackendImplTest {
 
     @Test
     fun `should invoke errorcallback when getting name given id is greater than 50`() {
-        val id = 51
-        backend.getName(51, resultCallback, errorCallback)
+        val id = ID_MORE_THAN_FIFTY
+
+        backend.getName(ID_MORE_THAN_FIFTY, resultCallback, errorCallback)
 
         verify {
             errorCallback.onError(match {
@@ -63,7 +61,7 @@ class BackendImplTest {
 
     @Test
     fun `should not invoke resultcallback when getting name given id is greater than 50`() {
-        backend.getName(51, resultCallback, errorCallback)
+        backend.getName(ID_MORE_THAN_FIFTY, resultCallback, errorCallback)
 
         verify { resultCallback wasNot Called }
     }
@@ -86,5 +84,11 @@ class BackendImplTest {
         backend.getName(id, resultCallback, errorCallback)
 
         verify { errorCallback wasNot Called }
+    }
+
+    companion object {
+        private const val EXCEPTION_MESSAGE = "java.lang.IllegalArgumentException: Id must be greater or equal than zero."
+        private const val ID_LESS_THAN_ZERO = -1
+        private const val ID_MORE_THAN_FIFTY = 51
     }
 }
